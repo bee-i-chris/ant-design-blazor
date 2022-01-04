@@ -18,11 +18,11 @@ else if (IsColGroup)
 {
 	if (Width != null)
 	{
-		<col class="ant-table-selection-col" style="width: @((CssSizeLength)Width); min-width: @((CssSizeLength)Width);">
+	    <col class="ant-table-selection-col" style="width: @((CssSizeLength)Width); min-width: @((CssSizeLength)Width);" />
 	}
 	else
 	{
-		<col class="ant-table-selection-col">
+	    <col class="ant-table-selection-col" />
 	}
 }
 else if (IsHeader && HeaderColSpan != 0)

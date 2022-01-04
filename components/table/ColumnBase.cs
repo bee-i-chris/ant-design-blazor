@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using AntDesign.TableModels;
 using Microsoft.AspNetCore.Components;
 
@@ -94,6 +95,7 @@ namespace AntDesign
         private string _fixedStyle;
 
         protected string FixedStyle => _fixedStyle;
+
 
         private void SetClass()
         {

@@ -55,16 +55,17 @@
 </CascadingValue>
 
 @code {
-	RenderFragment<MenuItem> content = item =>
-	@<Template>
-		@if (item.Title != null)
-		{
-			@item.Title
-		}
-		else
-		{
-			@item.ChildContent
-		}
-	</Template>
-	;
+
+    RenderFragment<MenuItem> content = me =>
+        @<Template>
+            @if (me.Title != null)
+            {
+                @me.Title
+            }
+            else
+            {
+                @me.ChildContent
+            }
+        </Template>;
+
 }

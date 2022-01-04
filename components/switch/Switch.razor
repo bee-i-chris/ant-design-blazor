@@ -21,11 +21,17 @@
     <span class="@($"{_prefixCls}-inner")">
         @if (CurrentValue)
         {
-            if (CheckedChildrenTemplate != null)@CheckedChildrenTemplate else @CheckedChildren
-        }
+            if (CheckedChildrenTemplate != null) {
+                @CheckedChildrenTemplate}
+            else {
+                @CheckedChildren}
+            }
         else
         {
-            if (UnCheckedChildrenTemplate != null)@UnCheckedChildrenTemplate else @UnCheckedChildren
+            if (UnCheckedChildrenTemplate != null){
+                @UnCheckedChildrenTemplate} 
+            else {
+                @UnCheckedChildren}
         }
     </span>
 

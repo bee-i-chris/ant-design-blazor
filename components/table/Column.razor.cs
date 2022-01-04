@@ -8,6 +8,8 @@ using System.Reflection;
 using AntDesign.Internal;
 using AntDesign.TableModels;
 using Microsoft.AspNetCore.Components;
+using Core.Db;
+using Core.Utilities;
 
 namespace AntDesign
 {
@@ -127,7 +129,8 @@ namespace AntDesign
 
         public string DisplayName { get; private set; }
 
-        public string FieldName { get; private set; }
+        [Parameter]
+        public string FieldName { get; set; }
 
         public ITableSortModel SortModel { get; private set; }
 
@@ -156,6 +159,18 @@ namespace AntDesign
 
         private string[] _selectedFilterValues;
 
+
+        [Parameter]
+        public Expression<Func<TData>> For { get; set; }
+
+        [Parameter]
+        public Expression<Func<TData>> SortFor { get; set; }
+
+        [Parameter]
+        public string SortField { get; set; }
+
+
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -164,6 +179,15 @@ namespace AntDesign
 
             if (IsHeader)
             {
+                if (DataIndex == null && (For != null || FieldName != null))
+                {
+                    var map = GetObjectAccessor(FieldName, For);
+                    if (map != null)
+                    {
+                        if (DataIndex == null) DataIndex = map.AccessPath;
+                    }
+                }
+
                 if (FieldExpression != null)
                 {
                     if (FieldExpression.Body is not MemberExpression memberExp)
@@ -197,6 +221,15 @@ namespace AntDesign
             else if (IsBody)
             {
                 SortModel = Context.HeaderColumns[ColIndex] is IFieldColumn fieldColumn ? fieldColumn.SortModel : null;
+
+                if (DataIndex == null && (For != null || FieldName != null))
+                {
+                    var map = GetObjectAccessor(FieldName, For);
+                    if (map != null)
+                    {
+                        if (DataIndex == null) DataIndex = map.AccessPath;
+                    }
+                }
 
                 if (DataIndex != null)
                 {
@@ -273,6 +306,10 @@ namespace AntDesign
                .If($"ant-table-column-sort", () => Sortable && SortModel != null && SortModel.SortDirection.IsIn(SortDirection.Ascending, SortDirection.Descending));
         }
 
+
+        /// <summary>
+        /// Parameter werden gesetzt
+        /// </summary>
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -284,6 +321,7 @@ namespace AntDesign
                     null;
             }
         }
+
 
         protected override bool ShouldRender()
         {
@@ -442,6 +480,34 @@ namespace AntDesign
         private void InitFilters()
         {
             _filters = new List<TableFilter>() { GetNewFilter() };
+        }
+
+
+        private ObjectAccessor GetObjectAccessor(string field, Expression<Func<TData>> forField)
+        {
+            // Spalte im übergeordneten Model ermitteln (Bound)
+            if ((field != null || forField != null) && Table?.Schema != null)
+            {
+                var schema = Table.Schema;
+
+                if (!string.IsNullOrEmpty(field))
+                {
+                    var ns = new NamespaceString(field);
+                    var map = ObjectAccessor.FromAccessPath(ns, schema);
+                    if (map?.PropertyMap == null) throw new InvalidOperationException($"GridColumn: Could not create ObjectAccessor for path '{field}' in schema '{schema}'");
+                    return map;
+                }
+                else
+                {
+                    var ns = global::Core.Utilities.Reflection.ExpressionHelper.GetHierarchyName(forField);
+                    if (ns.PartsCount > 1) ns = ns.RemoveRoot(1);
+                    var map = ObjectAccessor.FromAccessPath(ns, schema);
+                    if (map?.PropertyMap == null) throw new InvalidOperationException($"GridColumn: Could not create ObjectAccessor for path '{ns}' in schema '{schema}'");
+                    return map;
+                }
+            }
+
+            return null;
         }
     }
 }

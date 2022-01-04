@@ -1,4 +1,5 @@
 ﻿using AntDesign.TableModels;
+using Core.Db;
 
 namespace AntDesign
 {
@@ -57,5 +58,7 @@ namespace AntDesign
         internal void AddSummaryRow(SummaryRow summaryRow);
 
         internal void OnColumnInitialized();
+
+        IPocoMapSchema Schema { get; }
     }
 }

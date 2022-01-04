@@ -60,11 +60,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SAM\src\Core\Core.Db\Core.Db.NET6.csproj" />
-    <ProjectReference Include="..\..\..\SAM\src\Core\Core.Utilities\Core.Utilities.NET6.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="**\*.razor">
       <Pack>false</Pack>
     </Content>

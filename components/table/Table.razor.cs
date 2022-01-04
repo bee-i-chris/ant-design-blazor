@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AntDesign.Core.HashCodes;
 using AntDesign.JsInterop;
 using AntDesign.TableModels;
+using Core.Db;
 using Microsoft.AspNetCore.Components;
 
 namespace AntDesign
@@ -141,6 +142,8 @@ namespace AntDesign
 
         public ColumnContext ColumnContext { get; set; }
 
+        public IPocoMapSchema Schema { get; }
+
         private IEnumerable<TItem> _showItems;
 
         private IEnumerable<TItem> _dataSource;
@@ -194,6 +197,12 @@ namespace AntDesign
         {
             _summaryRows ??= new List<SummaryRow>();
             _summaryRows.Add(summaryRow);
+        }
+
+
+        public Table()
+        {
+            Schema = PocoInfoCache.Request(typeof(TItem));
         }
 
 
